@@ -1,5 +1,15 @@
 class TabooSearch:
     def __init__(self, problem, iterations=1000, tenure=5):
+        """
+        Initializes the Taboo search algorithm.
+        Args:
+            problem (object): The problem instance to solve. This should be a general type
+                            that supports the required operations for the Taboo search.
+            iterations (int, optional): The maximum number of iterations to perform. 
+                                        Defaults to 1000.
+            tenure (int, optional): The tenure of the Taboo list, which determines how 
+                                    long a move remains forbidden. Defaults to 5.
+        """
         # TODO: Define a General Type for different Problems
         self.problem = problem
         self.n_iterations = iterations
