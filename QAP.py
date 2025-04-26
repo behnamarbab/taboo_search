@@ -104,7 +104,7 @@ class QAP:
         """
         res = 0
         for i in range(len(sol)):
-            for j in range(i+1, len(sol)):
+            for j in range(len(sol)):
                 res += self.d[i][j] * self.f[sol[i]][sol[j]]
         return res
 

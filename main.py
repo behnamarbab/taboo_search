@@ -1,7 +1,9 @@
 import argparse
+import os
+import math
+
 from QAP import QAP
 from taboo import TabooSearch
-import os
 
 def parse_args():
     args = argparse.ArgumentParser(description="Taboo Search for QAP")
@@ -44,10 +46,22 @@ if __name__ == "__main__":
 
     print(f"Running Taboo Search for QAP on \"{filename}\"")
     print(f"Best known solution: {best_solutions[filename]}")
+    sum = 0
+    best_fitness = math.inf
     for i in range(runs):
         qap = QAP(filepath, tenure=tenure)
         TS = TabooSearch(qap, iterations=iterations)
         best = TS.run()
+        if best[2] < best_fitness:
+            best_fitness = best[2]
+        sum += best[2]
         print(" " + "-" * 92)
-        print(f"| Best solution: {str([b+1 for b in best[0]]):<76}|")
         print(f"| {'Run:':<5}{i+1:<5}| {'Iterations:':<12}{iterations:<7}| {'Tenure:':<8}{tenure:<4}| {'Best Fitness:':<14}{best[2]:<10} | diff: {best[2] - best_solutions[filename]:<10} |")
+        if len(best[0]) > 20:
+            print(f"| Best solution: {', '.join([str(b+1) for b in best[0][:18]])+', ...':<75} |")
+        else:
+            print(f"| Best solution: {', '.join([str(b+1) for b in best[0]]):<76}|")
+    print(" " + "-" * 92)
+    print("Average best fitness: ", sum//runs)
+    print(f"Best fitness found {best_fitness}, best known {best_solutions[filename]}, diff: {best_fitness - best_solutions[filename]}")
+    
