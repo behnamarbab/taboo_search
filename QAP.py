@@ -1,5 +1,18 @@
 import random
 import math
+from enum import Enum
+from collections import defaultdict
+
+class NeighType(Enum):
+    """
+    Enum class to represent different types of neighborhood structures for optimization algorithms.
+    Attributes:
+        SWAP (int): Represents the swap neighborhood structure.
+        REVERSE (int): Represents the reverse neighborhood structure.
+    """
+    SWAP = 0
+    REVERSE = 1
+    
 
 class QAP:
     #<- Taboo Table Class
@@ -21,13 +34,15 @@ class QAP:
             is_taboo(p):
                 Checks if a move is currently in the Taboo list.
         """
-        def __init__(self, n, tenure=5):
+        def __init__(self, n, tenure=5, use_frequencies=False):
             self.n = n
             self.tenure = tenure
+            self.use_frequencies = use_frequencies
             self.create_taboo_table()
 
         def create_taboo_table(self):
             self.taboo = dict()
+            self.taboo_frequencies = defaultdict(int)
 
         def update_taboo_table(self):
             to_be_removed = []
@@ -42,12 +57,17 @@ class QAP:
             if p[0] > p[1]:
                 p[0], p[1] = p[1], p[0]
             self.taboo[p] = self.tenure
+            if self.use_frequencies:
+                self.taboo_frequencies[p] += 1
+                if self.taboo_frequencies[p] > self.tenure*2:
+                    self.taboo[p] = self.tenure * 4
+                    self.taboo_frequencies[p] //= 2
 
         def is_taboo(self, p):
             return p in self.taboo
     # End of Taboo Table Class ->
 
-    def __init__(self, data_file="data/tai12a.dat", tenure=5):
+    def __init__(self, data_file="data/tai12a.dat", tenure=5, neigh_type=NeighType.SWAP, use_frequencies=False):
         """
         Initializes the QAP (Quadratic Assignment Problem) solver.
 
@@ -64,7 +84,8 @@ class QAP:
         """
         self.read_data(data_file)
         self.tenure = tenure
-        self.taboo = self.Taboo(self.n, tenure=self.tenure)
+        self.neigh_type = neigh_type
+        self.taboo = self.Taboo(self.n, tenure=self.tenure, use_frequencies=use_frequencies)
 
     def add_taboo(self, p):
         """
@@ -148,8 +169,11 @@ class QAP:
             if self.taboo.is_taboo((a, b)) or (a, b) in cur_actions:
                 continue
             cur_actions.append((a, b))
-            sn = solution[:][0][:]
-            sn[a], sn[b] = sn[b], sn[a]
+            sn = solution[:][0][:] # Copy the current solution encoding
+            if self.neigh_type == NeighType.SWAP:
+                sn[a], sn[b] = sn[b], sn[a]
+            elif self.neigh_type == NeighType.REVERSE:
+                sn = sn[:a]+sn[a:b][::-1]+sn[b:]
             neighs.append([sn, (a, b), math.inf])  # Neighbor, action, fitness
             count -= 1
         return neighs

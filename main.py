@@ -2,7 +2,7 @@ import argparse
 import os
 import math
 
-from QAP import QAP
+from QAP import QAP, NeighType
 from taboo import TabooSearch
 
 def parse_args():
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
         for i in range(runs):
             # Setup and run Taboo Search on the QAP instance
-            qap = QAP(data_filepath, tenure=tenure)
+            qap = QAP(data_filepath, tenure=tenure, neigh_type=NeighType.REVERSE)
             TS = TabooSearch(qap, iterations=iterations)
             best = TS.run()
             
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
             # Result and statistics
             print(" " + "-" * 92)
-            print(f"| {'Run:':<5}{i+1:<5}| {'Iterations:':<12}{iterations:<7}| {'Tenure:':<8}{tenure:<4}| {'Best Fitness:':<14}{best[2]:<10} | diff: {best[2] - best_solutions[filename]:<10} |")
+            print(f"| {'Run:':<5}{i+1:<5}| {'Iterations:':<12}{iterations:<7}| {'Tenure:':<8}{tenure:<4}| {'Best Fitness:':<14}{best[2]:<10} | diff: {best[2] - best_solutions[f]:<10} |")
             if len(best[0]) > 20:
                 print(f"| Best solution: {', '.join([str(b+1) for b in best[0][:18]])+', ...':<75} |")
             else:
