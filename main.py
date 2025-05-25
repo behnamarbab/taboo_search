@@ -1,6 +1,7 @@
 import argparse
 import os
-import math
+import json
+from copy import deepcopy as cp
 
 from QAP import QAP, NeighType
 from taboo import TabooSearch
@@ -30,6 +31,20 @@ best_solutions = {
     "tai100a.dat": 21052466,
 }
 
+def load_configurations(filename):
+    """
+    Load configurations from a JSON file.
+
+    Args:
+        filename (str): The name of the JSON file to load.
+
+    Returns:
+        dict: A dictionary containing the configurations.
+    """
+    with open(filename, "r") as f:
+        configurations = json.load(f)
+    return configurations
+
 def save_results_to_markdown(filename, results):
     """
     Save the results of the Taboo Search runs to a markdown file.
@@ -40,17 +55,19 @@ def save_results_to_markdown(filename, results):
     """
     markdown_file = filename.replace(".dat", "_results.md")
     with open(markdown_file, "w") as f:
-        # Write the header
-        f.write(f"# Results for QAP\n\n")
-        header = "| Algorithm <br> TabooSearch |" + "|".join(f" Run {i+1} " for i in range(10)) + "|"
-        f.write(header + "\n")
-        tlines = '|'.join(['-'*len(x) for x in header.split("|")])
-        f.write(tlines + "\n")        
-        # Write each result row
-        for res in results.keys():
-            results_line = f"| {res} | " + "|".join(f"{result}" for result in results[res]) + "|"
-            f.write(results_line + "\n")
-        
+        for conf_res in results.keys():
+            # Write the header
+            f.write(f"# Results for QAP for {conf_res}\n\n")
+            header = "| Algorithm <br> TabooSearch |" + "|".join(f" Run {i+1} " for i in range(10)) + "|"
+            f.write(header + "\n")
+            tlines = '|'.join(['-'*len(x) for x in header.split("|")])
+            f.write(tlines + "\n")        
+            # Write each result row
+            for res in results[conf_res].keys():
+                results_line = f"| {res} | " + "|".join(f"{result}" for result in results[conf_res][res]) + "|"
+                f.write(results_line + "\n")
+                
+            f.write("\n")
     print(f"Results saved to {markdown_file}")
 
 if __name__ == "__main__":
@@ -60,43 +77,57 @@ if __name__ == "__main__":
     tenure=args.tenure
     iterations=args.iterations
     runs=args.runs
+    configs = load_configurations("configs.json")
     
     if test_all:
         results = {f: [] for f in best_solutions.keys()}
+        conf_results = {f: cp(results) for f in configs.keys()}
     else:
         results = {filename: []}
-    for f in results.keys():
-        data_filepath = os.path.join("data", f)
-        if not os.path.exists(data_filepath):
-            print(f"File {data_filepath} does not exist.")
-            exit(1)
-        if f not in best_solutions:
-            print(f"File {f} not in best solutions dictionary.")
-            exit(1)
-
-        print(f"Running Taboo Search for QAP on \"{f}\"")
-        print(f"Best known solution: {best_solutions[f]}")
-
-        for i in range(runs):
-            # Setup and run Taboo Search on the QAP instance
-            qap = QAP(data_filepath, tenure=tenure, neigh_type=NeighType.REVERSE)
-            TS = TabooSearch(qap, iterations=iterations)
-            best = TS.run()
+        conf_results = {"case1": cp(results)}
+    for con_r in conf_results.keys():
+        results = conf_results[con_r]     
+        for f in results.keys():
+            neigh_type = configs[con_r]["neigh_type"]
+            if neigh_type == 0:
+                neigh_type = NeighType.SWAP
+            elif neigh_type == 1:
+                neigh_type = NeighType.REVERSE
+            use_frequencies = configs[con_r]["use_frequencies"]
+            iterations = configs[con_r]["iterations"]
+            tenure = configs[con_r]["tenure"]
             
-            results[f].append(best[2])
+            data_filepath = os.path.join("data", f)
+            if not os.path.exists(data_filepath):
+                print(f"File {data_filepath} does not exist.")
+                exit(1)
+            if f not in best_solutions:
+                print(f"File {f} not in best solutions dictionary.")
+                exit(1)
 
-            # Result and statistics
+            print(f"Running Taboo Search for QAP on \"{f}\" for test case {con_r}")
+            print(f"Best known solution: {best_solutions[f]}")
+
+            for i in range(runs):
+                # Setup and run Taboo Search on the QAP instance
+                qap = QAP(data_filepath, tenure=tenure, neigh_type=neigh_type, use_frequencies=use_frequencies)
+                TS = TabooSearch(qap, iterations=iterations)
+                best = TS.run()
+                
+                results[f].append(best[2])
+
+                # Result and statistics
+                print(" " + "-" * 92)
+                print(f"| {'Run:':<5}{i+1:<5}| {'Iterations:':<12}{iterations:<7}| {'Tenure:':<8}{tenure:<4}| {'Best Fitness:':<14}{best[2]:<10} | diff: {best[2] - best_solutions[f]:<10} |")
+                if len(best[0]) > 20:
+                    print(f"| Best solution: {', '.join([str(b+1) for b in best[0][:18]])+', ...':<75} |")
+                else:
+                    print(f"| Best solution: {', '.join([str(b+1) for b in best[0]]):<76}|")
+            
+            # Final statistics
             print(" " + "-" * 92)
-            print(f"| {'Run:':<5}{i+1:<5}| {'Iterations:':<12}{iterations:<7}| {'Tenure:':<8}{tenure:<4}| {'Best Fitness:':<14}{best[2]:<10} | diff: {best[2] - best_solutions[f]:<10} |")
-            if len(best[0]) > 20:
-                print(f"| Best solution: {', '.join([str(b+1) for b in best[0][:18]])+', ...':<75} |")
-            else:
-                print(f"| Best solution: {', '.join([str(b+1) for b in best[0]]):<76}|")
-        
-        # Final statistics
-        print(" " + "-" * 92)
-        print("Average best fitness: ", sum(results[f])//runs)
-        print(f"Best fitness found {min(results[f])}, best known {best_solutions[f]}, diff: {min(results[f]) - best_solutions[f]}")
-        print()
+            print("Average best fitness: ", sum(results[f])//runs)
+            print(f"Best fitness found {min(results[f])}, best known {best_solutions[f]}, diff: {min(results[f]) - best_solutions[f]}")
+            print()
 
-    save_results_to_markdown("results.md", results)
+    save_results_to_markdown("results.md", conf_results)

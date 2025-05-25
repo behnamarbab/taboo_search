@@ -1,0 +1,98 @@
+{
+    "case1": {
+        "neigh_type": 0,
+        "use_frequencies": false,
+        "iterations": 1000,
+        "tenure": 5
+    },
+    "case2": {
+        "neigh_type": 0,
+        "use_frequencies": false,
+        "iterations": 1000,
+        "tenure": 10
+    },
+    "case3": {
+        "neigh_type": 0,
+        "use_frequencies": false,
+        "iterations": 4000,
+        "tenure": 5
+    },
+    "case4": {
+        "neigh_type": 0,
+        "use_frequencies": false,
+        "iterations": 4000,
+        "tenure": 10
+    },
+    "case5": {
+        "neigh_type": 0,
+        "use_frequencies": true,
+        "iterations": 1000,
+        "tenure": 5
+    },
+    "case6": {
+        "neigh_type": 0,
+        "use_frequencies": true,
+        "iterations": 1000,
+        "tenure": 10
+    },
+    "case7": {
+        "neigh_type": 0,
+        "use_frequencies": true,
+        "iterations": 4000,
+        "tenure": 5
+    },
+    "case8": {
+        "neigh_type": 0,
+        "use_frequencies": true,
+        "iterations": 4000,
+        "tenure": 10
+    },
+    "case9": {
+        "neigh_type": 1,
+        "use_frequencies": false,
+        "iterations": 1000,
+        "tenure": 5
+    },
+    "case10": {
+        "neigh_type": 1,
+        "use_frequencies": false,
+        "iterations": 1000,
+        "tenure": 10
+    },
+    "case11": {
+        "neigh_type": 1,
+        "use_frequencies": false,
+        "iterations": 4000,
+        "tenure": 5
+    },
+    "case12": {
+        "neigh_type": 1,
+        "use_frequencies": false,
+        "iterations": 4000,
+        "tenure": 10
+    },
+    "case13": {
+        "neigh_type": 1,
+        "use_frequencies": true,
+        "iterations": 1000,
+        "tenure": 5
+    },
+    "case14": {
+        "neigh_type": 1,
+        "use_frequencies": true,
+        "iterations": 1000,
+        "tenure": 10
+    },
+    "case15": {
+        "neigh_type": 1,
+        "use_frequencies": true,
+        "iterations": 4000,
+        "tenure": 5
+    },
+    "case16": {
+        "neigh_type": 1,
+        "use_frequencies": true,
+        "iterations": 4000,
+        "tenure": 10
+    }
+}
