@@ -12,7 +12,10 @@ class NeighType(Enum):
     """
     SWAP = 0
     REVERSE = 1
-    
+    ADHOC = 2
+
+ADHOC_SWP = 0.8
+ADHOC_REV = 1 - ADHOC_SWP
 
 class QAP:
     #<- Taboo Table Class
@@ -170,10 +173,19 @@ class QAP:
                 continue
             cur_actions.append((a, b))
             sn = solution[:][0][:] # Copy the current solution encoding
-            if self.neigh_type == NeighType.SWAP:
+            
+            adhoc_neigh = 0
+            if self.neigh_type == NeighType.ADHOC:
+                if random.random() < ADHOC_SWP:
+                    adhoc_neigh = 1
+                else:
+                    adhoc_neigh = 2
+            
+            if self.neigh_type == NeighType.SWAP or adhoc_neigh == 1:
                 sn[a], sn[b] = sn[b], sn[a]
-            elif self.neigh_type == NeighType.REVERSE:
+            elif self.neigh_type == NeighType.REVERSE or adhoc_neigh == 2:
                 sn = sn[:a]+sn[a:b][::-1]+sn[b:]
+            
             neighs.append([sn, (a, b), math.inf])  # Neighbor, action, fitness
             count -= 1
         return neighs

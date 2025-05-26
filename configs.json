@@ -94,5 +94,53 @@
         "use_frequencies": true,
         "iterations": 4000,
         "tenure": 10
+    },
+    "case17": {
+        "neigh_type": 2,
+        "use_frequencies": false,
+        "iterations": 1000,
+        "tenure": 5
+    },
+    "case18": {
+        "neigh_type": 2,
+        "use_frequencies": false,
+        "iterations": 1000,
+        "tenure": 10
+    },
+    "case19": {
+        "neigh_type": 2,
+        "use_frequencies": false,
+        "iterations": 4000,
+        "tenure": 5
+    },
+    "case20": {
+        "neigh_type": 2,
+        "use_frequencies": false,
+        "iterations": 4000,
+        "tenure": 10
+    },
+    "case21": {
+        "neigh_type": 2,
+        "use_frequencies": true,
+        "iterations": 1000,
+        "tenure": 5
+    },
+    "case22": {
+        "neigh_type": 2,
+        "use_frequencies": true,
+        "iterations": 1000,
+        "tenure": 10
+    },
+    "case23": {
+        "neigh_type": 2,
+        "use_frequencies": true,
+        "iterations": 4000,
+        "tenure": 5
+    },
+    "case24": {
+        "neigh_type": 2,
+        "use_frequencies": true,
+        "iterations": 4000,
+        "tenure": 10
     }
 }

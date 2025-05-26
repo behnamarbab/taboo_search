@@ -19,6 +19,7 @@ def parse_args():
     # Argument for number of runs - default to 10
     args.add_argument("-r", "--runs", type=int, default=10,
                         help="Number of runs for the Taboo search")
+    # Not used, but kept for compatibility
     args.add_argument("-s", "--seed", type=int, default=0,
                         help="Random seed for the Taboo search")
     return args.parse_args()
@@ -109,6 +110,9 @@ if __name__ == "__main__":
                 neigh_type = NeighType.SWAP
             elif neigh_type == 1:
                 neigh_type = NeighType.REVERSE
+            elif neigh_type == 2:
+                neigh_type = NeighType.ADHOC
+
             use_frequencies = configs[con_r]["use_frequencies"]
             iterations = configs[con_r]["iterations"]
             tenure = configs[con_r]["tenure"]
