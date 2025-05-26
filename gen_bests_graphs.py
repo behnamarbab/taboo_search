@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 
+from ranking import rank_it
+
 # TODO: Set an equal maximum range for each file. (tai12a be 350000) for instance, or the maximum of all different cases.
 # TODO: ... needs preprocessing of the data to find the maximum range for each file.
 
@@ -55,7 +57,7 @@ def get_configs(json_config_file):
         configs = json.load(f)
     return configs
 
-def generate_best_graphs(best_improvements, output_dir="bests_graphs"):
+def generate_best_graphs(best_improvements, output_dir="results"):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -72,7 +74,14 @@ def generate_best_graphs(best_improvements, output_dir="bests_graphs"):
             ax.set_xlim(0, 4000)
 
             info = configs[case_name]
-            printable_info = f'Neighbor Function: {"REVERSE" if info["neigh_type"] else "SWAP"}\n' \
+            neigh_type = None
+            if info['neigh_type'] == 0:
+                neigh_type = "SWAP"
+            elif info['neigh_type'] == 1:
+                neigh_type = "REVERSE"
+            elif info['neigh_type'] == 2:
+                neigh_type = "ADHOC"
+            printable_info = f'Neighbor Function: {neigh_type}\n' \
                              f'Use Frequency: {info["use_frequencies"]}\n' \
                              f'# Iterations: {info["iterations"]}\n' \
                              f'Tenure: {info["tenure"]}'
@@ -128,3 +137,4 @@ if __name__ == "__main__":
 
     # Generate and save the graphs
     generate_best_graphs(best_improvements)
+    rank_it(best_improvements)
