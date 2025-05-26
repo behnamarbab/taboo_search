@@ -70,6 +70,18 @@ def save_results_to_markdown(filename, results):
             f.write("\n")
     print(f"Results saved to {markdown_file}")
 
+def save_best_improvements_to_json(filename, best_improvements):
+    """
+    Save the best improvements to a JSON file.
+
+    Args:
+        filename (str): The name of the JSON file to save.
+        best_improvements (dict): A dictionary containing the best improvements.
+    """
+    with open(filename, "w") as f:
+        json.dump(best_improvements, f, indent=4)
+    print(f"Best improvements saved to {filename}")
+
 if __name__ == "__main__":
     args = parse_args()
     test_all = args.test_all
@@ -81,12 +93,16 @@ if __name__ == "__main__":
     
     if test_all:
         results = {f: [] for f in best_solutions.keys()}
+        conf_best_improvements = {f: cp(results) for f in configs.keys()}
         conf_results = {f: cp(results) for f in configs.keys()}
     else:
         results = {filename: []}
+        conf_best_improvements = {"case1": cp(results)}
         conf_results = {"case1": cp(results)}
+
     for con_r in conf_results.keys():
-        results = conf_results[con_r]     
+        results = conf_results[con_r]
+        best_improvements = conf_best_improvements[con_r]
         for f in results.keys():
             neigh_type = configs[con_r]["neigh_type"]
             if neigh_type == 0:
@@ -115,6 +131,7 @@ if __name__ == "__main__":
                 best = TS.run()
                 
                 results[f].append(best[2])
+                best_improvements[f].append(TS.tracked_bests)
 
                 # Result and statistics
                 print(" " + "-" * 92)
@@ -131,3 +148,4 @@ if __name__ == "__main__":
             print()
 
     save_results_to_markdown("results.md", conf_results)
+    save_best_improvements_to_json("best_improvements.json", conf_best_improvements)

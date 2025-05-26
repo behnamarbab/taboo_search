@@ -15,6 +15,7 @@ class TabooSearch:
         self.n_iterations = iterations
         self.iteration = 0
         self.tenure = tenure
+        self.best_tracker = []
 
         self._init()
 
@@ -82,10 +83,18 @@ class TabooSearch:
         """
         best_fitness = self.candidates[0][2]
         best_ind = 0
+        found_new_best = False
+        new_best_fitness = None
         for i in range(1, len(self.candidates)):
             if self.candidates[i][2] < best_fitness:
                 best_fitness = self.candidates[i][2]
                 best_ind = i
+            if self.candidates[i][2] < self.best_solution[2]:
+                if new_best_fitness is None or self.candidates[i][2] < new_best_fitness:
+                    found_new_best = True
+                    new_best_fitness = self.candidates[i][2]
+        if found_new_best or self.best_tracker == []:
+            self.best_tracker.append((self.iteration, best_fitness))
         self.problem.add_taboo(self.candidates[best_ind][1])
         return self.candidates[best_ind]
 
@@ -115,6 +124,21 @@ class TabooSearch:
 
         """
         self.problem.update_taboo()
+        
+    @property
+    def tracked_bests(self):
+        """
+        Returns the list of best solutions tracked during the search process.
+
+        This property provides access to the `best_tracker` attribute, which contains
+        tuples of iteration numbers and their corresponding best fitness values found
+        during the Taboo search.
+
+        Returns:
+            list: A list of tuples, where each tuple contains an iteration number and
+                the best fitness value found at that iteration.
+        """
+        return self.best_tracker
 
     def run(self):
         """
@@ -137,4 +161,5 @@ class TabooSearch:
                 break
             
             self._update_taboo()
+        self.best_tracker.append((self.iteration, self.best_solution[2]))
         return self.best_solution
