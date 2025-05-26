@@ -70,7 +70,7 @@ def generate_best_graphs(best_improvements, output_dir="bests_graphs"):
                              f'Tenure: {info["tenure"]}'
 
             # This adds the box to the right of the plot
-            fig.text(0.77, 0.2, printable_info,
+            fig.text(0.79, 0.2, printable_info,
                      ha='left', va='center', fontsize=10,
                      bbox=dict(boxstyle="round", facecolor="white", alpha=0.6))
 
@@ -101,9 +101,12 @@ def generate_best_graphs(best_improvements, output_dir="bests_graphs"):
             ax.set_ylabel('Y')
             ax.legend(loc='upper left', bbox_to_anchor=(1.02, 0.9), borderaxespad=0., fontsize=9)
 
-            plt.tight_layout(rect=[0, 0, 0.90, 1])  # make room for the right-side text box
+            plt.tight_layout(rect=[0, 0, 0.92, 1])  # make room for the right-side text box
             file_safe_name = f"{case_name}_{file_name.replace('.', '_')}.png"
-            fig.savefig(os.path.join(output_dir, file_safe_name))
+            if not os.path.exists(os.path.join(output_dir, file_name.split('.')[0])):
+                os.makedirs(os.path.join(output_dir, file_name.split('.')[0]))
+            outpath = os.path.join(output_dir, file_name.split('.')[0], file_safe_name)
+            fig.savefig(outpath)
             print(f"Saved graph for {case_name} - {file_name} as {file_safe_name}")
             plt.close(fig)
 
