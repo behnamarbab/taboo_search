@@ -11,6 +11,14 @@ import numpy as np
 # TODO: Set an equal maximum range for each file. (tai12a be 350000) for instance, or the maximum of all different cases.
 # TODO: ... needs preprocessing of the data to find the maximum range for each file.
 
+best_solutions = {
+    "tai12a.dat": 224416,
+    "tai12b.dat": 39464925,
+    "tai15a.dat": 388214,
+    "tai17a.dat": 491812,
+    "tai100a.dat": 21052466,
+}
+
 def find_ranges(best_improvements):
     """
     Finds the maximum range for each file in the best improvements dictionary.
@@ -95,10 +103,13 @@ def generate_best_graphs(best_improvements, output_dir="bests_graphs"):
 
             ax.plot(x_range, avg_y, color='black', label='Average', linewidth=2)
             ax.fill_between(x_range, avg_y - std_y, avg_y + std_y, color='gray', alpha=0.3, label='±1 Std Dev')
+            
+            ax.axhline(y=best_solutions[file_name], color='red', linestyle='--', label='Best Known Solution')
+            
 
             ax.set_title(f'{case_name} - {file_name}')
-            ax.set_xlabel('X')
-            ax.set_ylabel('Y')
+            ax.set_xlabel('Iterations')
+            ax.set_ylabel('Fitness Value')
             ax.legend(loc='upper left', bbox_to_anchor=(1.02, 0.9), borderaxespad=0., fontsize=9)
 
             plt.tight_layout(rect=[0, 0, 0.92, 1])  # make room for the right-side text box
