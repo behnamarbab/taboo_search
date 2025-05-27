@@ -13,12 +13,12 @@
   - [Introduction](#introduction)
   - [Installation and execution](#installation-and-execution)
     - [Prerequisites](#prerequisites)
-    - [Running the Code](#running-the-code)
+    - [Running the code](#running-the-code)
       - [Arguments](#arguments)
       - [Example](#example)
-  - [Results and Analysis](#results-and-analysis)
+  - [Results and analysis](#results-and-analysis)
     - [Configurations](#configurations)
-    - [Generating Results](#generating-results)
+    - [Generating results](#generating-results)
     - [Results evaluation](#results-evaluation)
   - [Future work and further enhancements](#future-work-and-further-enhancements)
   - [Conclusion](#conclusion)
@@ -50,7 +50,7 @@ Install dependencies using pip:
 pip install pandas
 ```
 
-### Running the Code
+### Running the code
 
 Navigate to the project directory and run the script using:
 
@@ -81,7 +81,7 @@ To run all tests, simply run:
 python main.py test_all
 ```
 
-## Results and Analysis
+## Results and analysis
 
 ### Configurations
 
@@ -97,7 +97,7 @@ Various test configurations are provided in `configs.json`. Each configuration i
 
 As a result, there are 24 test cases generated for this experiment. It is also to be noted that for the `Neighboring function = 3 (SWAP-REVERSE)`, the selection of the function for neighbor function is 80% for `SWAP` and 20% for `REVERSE` technique.
 
-### Generating Results
+### Generating results
 
 After executing the tests using `main.py`, the results are automatically saved in two files: `best_improvements.json` and `results.md`. These files contain detailed information about the performance and outcomes of the Taboo Search runs.
 
