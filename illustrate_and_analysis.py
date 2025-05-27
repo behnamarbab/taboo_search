@@ -130,11 +130,16 @@ def generate_best_graphs(best_improvements, output_dir="results"):
             print(f"Saved graph for {case_name} - {file_name} as {file_safe_name}")
             plt.close(fig)
 
-if __name__ == "__main__":
+def run(best_improvements=None):
     # Load the best improvements from a JSON file
-    with open("best_improvements.json", "r") as f:
-        best_improvements = json.load(f)
+    if best_improvements is None:
+        with open("results/best_improvements.json", "r") as f:
+            best_improvements = json.load(f)
 
     # Generate and save the graphs
     generate_best_graphs(best_improvements)
     rank_it(best_improvements)
+    print("Graphs generated and saved in 'results' directory.")
+
+if __name__ == "__main__":
+    run()

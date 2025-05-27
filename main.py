@@ -6,23 +6,44 @@ from copy import deepcopy as cp
 from QAP import QAP, NeighType
 from taboo import TabooSearch
 
+results_dir = "results"
+
 def parse_args():
-    args = argparse.ArgumentParser(description="Taboo Search for QAP")
-    args.add_argument("test_all", nargs="?", const=True, default=False, 
-                        help="Run all tests if specified")
-    args.add_argument("-f", "--file", type=str, default="tai12a.dat",
+    parser = argparse.ArgumentParser(description="Taboo Search for QAP")
+
+    parser.add_argument("test_all", nargs="?", default=False, const=True,
+                        choices=["test_all", "analyze"],
+                        help="Use 'test_all' to run all tests")
+    
+    parser.add_argument("analyze", nargs="?", default=False, const=True,
+                        choices=["test_all", "analyze"],
+                        help="Use 'analyze' to analyze after test")
+
+    parser.add_argument("-f", "--file", type=str, default="tai12a.dat",
                         help="Path to the data file")
-    args.add_argument("-t", "--tenure", type=int, default=5,
+
+    parser.add_argument("-t", "--tenure", type=int, default=5,
                         help="Tenure for the Taboo search")
-    args.add_argument("-i", "--iterations", type=int, default=1000,
+
+    parser.add_argument("-i", "--iterations", type=int, default=1000,
                         help="Number of iterations for the Taboo search")
-    # Argument for number of runs - default to 10
-    args.add_argument("-r", "--runs", type=int, default=10,
+
+    parser.add_argument("-r", "--runs", type=int, default=10,
                         help="Number of runs for the Taboo search")
-    # Not used, but kept for compatibility
-    args.add_argument("-s", "--seed", type=int, default=0,
+
+    parser.add_argument("-s", "--seed", type=int, default=0,
                         help="Random seed for the Taboo search")
-    return args.parse_args()
+
+    args = parser.parse_args()
+
+    # Normalize test_all and analyze to True/False
+    test_all = args.test_all == "test_all" or args.analyze == "test_all"
+    analyze = args.test_all == "analyze" or args.analyze == "analyze"
+
+    args.test_all = test_all
+    args.analyze = analyze
+
+    return args
 
 best_solutions = {
     "tai12a.dat": 224416,
@@ -54,7 +75,7 @@ def save_results_to_markdown(filename, results):
         filename (str): The name of the markdown file to save.
         results (list of dict): A list of dictionaries containing run results.
     """
-    markdown_file = filename.replace(".dat", "_results.md")
+    markdown_file = os.path.join(results_dir, filename)
     with open(markdown_file, "w") as f:
         for conf_res in results.keys():
             # Write the header
@@ -67,7 +88,7 @@ def save_results_to_markdown(filename, results):
             for res in results[conf_res].keys():
                 results_line = f"| {res} | " + "|".join(f"{result}" for result in results[conf_res][res]) + "|"
                 f.write(results_line + "\n")
-                
+
             f.write("\n")
     print(f"Results saved to {markdown_file}")
 
@@ -79,6 +100,7 @@ def save_best_improvements_to_json(filename, best_improvements):
         filename (str): The name of the JSON file to save.
         best_improvements (dict): A dictionary containing the best improvements.
     """
+    filename = os.path.join(results_dir, filename)
     with open(filename, "w") as f:
         json.dump(best_improvements, f, indent=4)
     print(f"Best improvements saved to {filename}")
@@ -90,8 +112,10 @@ if __name__ == "__main__":
     tenure=args.tenure
     iterations=args.iterations
     runs=args.runs
+    analyze = args.analyze
     configs = load_configurations("configs.json")
-    
+    print("==========================")
+    print(test_all)
     if test_all:
         results = {f: [] for f in best_solutions.keys()}
         conf_best_improvements = {f: cp(results) for f in configs.keys()}
@@ -100,6 +124,7 @@ if __name__ == "__main__":
         results = {filename: []}
         conf_best_improvements = {"case1": cp(results)}
         conf_results = {"case1": cp(results)}
+        print("------------------", conf_results)
 
     for con_r in conf_results.keys():
         results = conf_results[con_r]
@@ -151,5 +176,10 @@ if __name__ == "__main__":
             print(f"Best fitness found {min(results[f])}, best known {best_solutions[f]}, diff: {min(results[f]) - best_solutions[f]}")
             print()
 
+    if not os.path.exists(results_dir):
+        os.makedirs(results_dir)
     save_results_to_markdown("results.md", conf_results)
     save_best_improvements_to_json("best_improvements.json", conf_best_improvements)
+    if analyze:
+        from illustrate_and_analysis import run as run_analysis
+        run_analysis(conf_best_improvements)
