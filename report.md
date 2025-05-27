@@ -9,6 +9,20 @@
 <p align="center"><em>Eastern Mediterranean University</em></p>
 <p align="center"><em>Spring 2025</em></p>
 
+- [Metaheuristic's Project Report - Taboo Search](#metaheuristics-project-report---taboo-search)
+  - [Introduction](#introduction)
+  - [Installation and execution](#installation-and-execution)
+    - [Prerequisites](#prerequisites)
+    - [Running the Code](#running-the-code)
+      - [Arguments](#arguments)
+      - [Example](#example)
+  - [Results and Analysis](#results-and-analysis)
+    - [Configurations](#configurations)
+    - [Generating Results](#generating-results)
+    - [Results evaluation](#results-evaluation)
+  - [Future work and further enhancements](#future-work-and-further-enhancements)
+  - [Conclusion](#conclusion)
+
 ## Introduction
 
 Taboo Search is a metaheuristic optimization algorithm designed to solve combinatorial and nonlinear problems. It enhances the performance of local search methods by using memory structures that describe the visited solutions or user-defined rules. The algorithm avoids cycling back to previously explored solutions by maintaining a "taboo list," which temporarily forbids or penalizes moves that would reverse recent changes. This approach enables the search to escape local optima and explore a broader solution space, making Taboo Search effective for complex optimization tasks such as scheduling, routing, and resource allocation.
@@ -18,6 +32,8 @@ In this project, the implementation of the Taboo Search algorithm is tailored to
 The project is organized into modular components, separating the core Taboo Search logic from problem-specific details such as solution representation and neighborhood generation. This modularity allows for easy adaptation to different optimization problems. The results demonstrate the effectiveness of Taboo Search in finding high-quality solutions within reasonable computational time, highlighting its practical applicability to real-world combinatorial optimization challenges.
 
 The target problem is [**Quadratic Assignment Problem (QAP)**](https://coral.ise.lehigh.edu/data-sets/qaplib/qaplib-problem-instances-and-solutions/#Ta).
+
+The code is available on [Github](https://github.com/behnamarbab/taboo_search).
 
 ## Installation and execution
 
